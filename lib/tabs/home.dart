@@ -87,17 +87,17 @@ class HomeTabs extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 285,
+          height: 400,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
               return Container(
-                height: 115,
+                height: 360,
                 margin: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color.fromARGB(255, 204, 204, 204)),
+                  border: Border.all(color: const Color.fromARGB(255, 250, 250, 250)),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: InkWell(
@@ -121,10 +121,11 @@ class HomeTabs extends StatelessWidget {
                             const Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) =>
                             const Icon(Icons.error),
-                        height: 180,
-                        width: 180,
+                        height: 300,
+                        width: 200,
                         fit: BoxFit.fitHeight,
                       ),
+                      const SizedBox(height: 8),
                       Text(
                         item['name'],
                         textAlign: TextAlign.center,
@@ -145,6 +146,7 @@ class HomeTabs extends StatelessWidget {
             },
           ),
         ),
+        const SizedBox(height: 24),
       ],
     );
   }

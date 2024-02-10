@@ -55,7 +55,7 @@ Widget orderMutation(
     builder: (runMutation, result) {
       key.currentState?.save();
       return ElevatedButton(
-        child: const Text('Add to cart'),
+        child: const Text('Sepete Ekle'),
         onPressed: () {
           if (kDebugMode) {
               printLongString('sku: $sku');

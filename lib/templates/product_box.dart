@@ -5,12 +5,12 @@ import '../screen/product.dart';
 
 Widget productBox(BuildContext context, dynamic item) {
   return Container(
-    margin: const EdgeInsets.all(8),
+    margin: const EdgeInsets.fromLTRB(6, 6, 6, 24),
     decoration: BoxDecoration(
-      border: Border.all(color: const Color.fromARGB(255, 218, 218, 218)),
-      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: const Color.fromARGB(255, 250, 250, 250)),
+      //borderRadius: BorderRadius.circular(12),
     ),
-    padding: const EdgeInsets.all(8),
+    //padding: const EdgeInsets.all(0),
     child: InkWell(
       onTap: () => Navigator.push(
         context,
@@ -22,12 +22,12 @@ Widget productBox(BuildContext context, dynamic item) {
         ),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CachedNetworkImage(
             imageUrl: item['image']['url'],
-            width: 120,
-            height: 120,
+            width: 300,
+            height: 300,
           ),
           const SizedBox(height: 8),
           Text(

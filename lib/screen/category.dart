@@ -74,7 +74,7 @@ class CategoryScreen extends StatelessWidget {
 
           return GridView.count(
             crossAxisCount: certainPlatformGridCount(),
-            childAspectRatio: 0.8, // İçerik yüksekliğini belirlemek için aspect ratio belirleyin
+            childAspectRatio: 0.5, // İçerik yüksekliğini belirlemek için aspect ratio belirleyin
 
             children: List.generate(
               items.length,
