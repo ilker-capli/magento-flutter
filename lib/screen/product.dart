@@ -1,7 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:html/parser.dart';
 import 'package:provider/provider.dart';
 
 import '../mutation.dart';
@@ -20,7 +20,8 @@ class ProductScreen extends StatefulWidget {
   });
 
   @override
-  State<ProductScreen> createState() => _ProductScreenState();
+  // ignore: library_private_types_in_public_api
+  _ProductScreenState createState() => _ProductScreenState();
 }
 
 class _ProductScreenState extends State<ProductScreen> {
@@ -28,6 +29,23 @@ class _ProductScreenState extends State<ProductScreen> {
   final optionsMap = <String, String>{};
   final _formKey = GlobalKey<FormState>();
 
+Map<String, bool> _isPanelExpandedMap = {};
+
+@override
+void initState() {
+  super.initState();
+  _isPanelExpandedMap = {
+    'description': false, // Varsayılan olarak kapalı
+    'shipping': false,
+  };
+}
+
+// ExpansionPanelList içindeki expansionCallback metodu
+expansionCallback(String panelKey, bool isExpanded) {
+  setState(() {
+    _isPanelExpandedMap[panelKey] = !isExpanded; // Tıklamaya göre panelin durumunu değiştir
+  });
+}
   static const query = r'''
    query GetProductsBySKU($sku: String) {
     products(filter: { sku: { eq: $sku }}) {
@@ -60,6 +78,7 @@ class _ProductScreenState extends State<ProductScreen> {
               sku
             }
             attributes {
+              uid
               label
               code
             }
@@ -72,7 +91,6 @@ class _ProductScreenState extends State<ProductScreen> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     qtyController.dispose();
     super.dispose();
   }
@@ -105,54 +123,130 @@ class _ProductScreenState extends State<ProductScreen> {
 
           dynamic item = result.data?['products']['items'][0];
           return SingleChildScrollView(
-            child: Form(
-              key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CachedNetworkImage(
-                    imageUrl: item['image']['url'],
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(),
+                  Center(
+                    child: CachedNetworkImage(
+                      imageUrl: item['image']['url'],
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                      height: 300,
                     ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                    height: 300,
                   ),
-                  Text(widget.title),
+                  const SizedBox(height: 16),
+                  Text(
+                    widget.title,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   Text(
                     currencyWithPrice(
                       item['price_range']['minimum_price']['final_price'],
                     ),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
                   ),
+                  const SizedBox(height: 16),
                   _options(
                     item: item,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextFormField(
-                      obscureText: false,
-                      controller: qtyController,
-                      decoration: InputDecoration(
-                        hintText: '1',
-                        labelText: 'Quantity',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(32.0),
+                  const SizedBox(height: 16),
+                  ExpansionPanelList(
+                    elevation: 0, // Shadow kaldır
+                    expandedHeaderPadding: EdgeInsets.zero, // ExpansionPanel'ın içeriğin kenar boşluklarını kaldır
+                    children: [
+                      ExpansionPanel(
+                        canTapOnHeader: true,
+                        headerBuilder: (context, isExpanded) => const ListTile(
+                          title: Text(
+                            'Ürün Açıklaması',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
+                        body: ListTile(
+                          title: Html(
+                            data: item['description']['html'],
+                            style: {
+                              'body': Style(fontSize: FontSize.medium),
+                            },
+                          ),
+                        ),
+                        isExpanded: _isPanelExpandedMap['description'] ?? false, // Panelin durumu
                       ),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please enter your quantity';
-                        }
-                        return null;
-                      },
+                      ExpansionPanel(
+                        canTapOnHeader: true,
+                        headerBuilder: (context, isExpanded) => const ListTile(
+                          title: Text(
+                            'Teslimat ve Kargo',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        body: ListTile(
+                          title: Html(
+                            data: 'Kargo ücreti 39,99 TL olup 1.000 TL ve üzeri siparişlerinizde kargo ücretsizdir. Siparişleriniz 2-4 iş günü içerisinde kargoya teslim edilecektir. Kargoya teslim edilen siparişiniz ile ilgili kargo firmasından tarafınıza SMS gönderilecek olup aynı anda kargo bilgileri mail olarak da tarafınıza bilgilendirme yapılacaktır (NOT: Birden fazla ürün bulunan siparişlerinizdeki bazı ürünler mağaza depolarımız üzerinden sevk edilebilir. Bu gönderiler parçalı gönderim olup farklı zamanlarda teslim edilebilmektedir. Siparişiniz ile herhangi bir soruda müşteri hizmetlerimizden bilgi alabilirsiniz). Sipariş gönderim aşamalarını Hesabım bölümündeki siparişlerim kısmından takip edebilirsiniz.',
+                            style: {
+                              'body': Style(fontSize: FontSize.medium),
+                            },
+                          ),
+                        ),
+                        isExpanded: _isPanelExpandedMap['shipping'] ?? false, // Panelin durumu
+                      ),
+                    ],
+
+                    expansionCallback: (panelIndex, isExpanded) {
+                      if (panelIndex == 0) {
+                        expansionCallback('description', !isExpanded); // Tıklamaya göre panelin durumunu değiştir
+                      } else if (panelIndex == 1) {
+                        expansionCallback('shipping', !isExpanded); // Tıklamaya göre panelin durumunu değiştir
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    obscureText: false,
+                    controller: qtyController,
+                    decoration: InputDecoration(
+                      hintText: '1',
+                      labelText: 'Adet',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(32.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(32.0),
+                        borderSide: const BorderSide(color: Colors.grey), // Gri renkli kenarlık
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(32.0),
+                        borderSide: const BorderSide(color: Colors.grey), // Gri renkli kenarlık
+                      ),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Lütfen sepete eklemek için adet girin';
+                      }
+                      return null;
+                    },
                   ),
-                  Text(
-                    parse(item['description']['html']).documentElement?.text ??
-                        "",
-                  ),
+                  const SizedBox(height: 16),
                   SizedBox(
-                    width: double.infinity, // match_parent
+                    width: double.infinity,
                     child: orderMutation(
                       cartProvider,
                       widget.sku,

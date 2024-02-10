@@ -1,8 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:magento_flutter/templates/product_box.dart';
 
-import '../screen/product.dart';
 import '../utils.dart';
 
 class SearchTabs extends StatefulWidget {
@@ -13,7 +12,7 @@ class SearchTabs extends StatefulWidget {
 }
 
 class _SearchTabState extends State<SearchTabs> {
-  Widget _title = const Text('Product Search');
+  Widget _title = const Text('Ürün Arama');
   Icon _actionButton = const Icon(Icons.search);
   Widget _body = Container();
 
@@ -26,7 +25,7 @@ class _SearchTabState extends State<SearchTabs> {
         items {
           name
           sku
-          thumbnail {
+          image {
             url
           }
           price_range {
@@ -75,7 +74,7 @@ class _SearchTabState extends State<SearchTabs> {
                     textInputAction: TextInputAction.search,
                     style: Theme.of(context).textTheme.titleLarge,
                     decoration: const InputDecoration(
-                      hintText: 'Search',
+                      hintText: 'Ne aramak istersiniz?',
                       border: InputBorder.none,
                     ),
                     onSubmitted: (_) {
@@ -85,7 +84,7 @@ class _SearchTabState extends State<SearchTabs> {
                     },
                   );
                 } else {
-                  _title = const Text('Product Search');
+                  _title = const Text('Ürün Arama');
                   _actionButton = const Icon(Icons.search);
                   _controller.clear();
                 }
@@ -120,14 +119,15 @@ class _SearchTabState extends State<SearchTabs> {
         List items = result.data?['products']['items'];
         if (items.isEmpty) {
           return const Center(
-            child: Text('Items are not found. Please try again later'),
+            child: Text('Arama sonucunda hiç bir ürün bulunamadı.'),
           );
         }
         return GridView.count(
           crossAxisCount: certainPlatformGridCount(),
+          childAspectRatio: 0.8, // İçerik yüksekliğini belirlemek için aspect ratio belirleyin
           children: List.generate(
             items.length,
-            (index) => categoryBox(
+            (index) => productBox(
               context,
               items[index],
             ),
@@ -136,34 +136,4 @@ class _SearchTabState extends State<SearchTabs> {
       },
     );
   }
-
-  Widget categoryBox(BuildContext context, dynamic item) => Container(
-        decoration: BoxDecoration(border: Border.all()),
-        child: InkWell(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProductScreen(
-                title: item['name'],
-                sku: item['sku'],
-              ),
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CachedNetworkImage(
-                imageUrl: item['thumbnail']['url'],
-                width: 120,
-                height: 120,
-              ),
-              Text(item['name']),
-              Text(
-                currencyWithPrice(
-                    item['price_range']['minimum_price']['final_price']),
-              ),
-            ],
-          ),
-        ),
-      );
 }

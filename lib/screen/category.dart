@@ -1,9 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:magento_flutter/templates/product_box.dart';
 
 import '../utils.dart';
-import 'product.dart';
 
 class CategoryScreen extends StatelessWidget {
   final String title;
@@ -69,15 +68,17 @@ class CategoryScreen extends StatelessWidget {
           List items = result.data?['products']['items'];
           if (items.isEmpty) {
             return const Center(
-              child: Text('Items are not found. Please try again later'),
+              child: Text('Bu kategoride şuan için hiç bir ürün bulunamadı.'),
             );
           }
 
           return GridView.count(
             crossAxisCount: certainPlatformGridCount(),
+            childAspectRatio: 0.8, // İçerik yüksekliğini belirlemek için aspect ratio belirleyin
+
             children: List.generate(
               items.length,
-              (index) => categoryBox(
+              (index) => productBox(
                 context,
                 items[index],
               ),
@@ -87,34 +88,4 @@ class CategoryScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget categoryBox(BuildContext context, dynamic item) => Container(
-        decoration: BoxDecoration(border: Border.all()),
-        child: InkWell(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProductScreen(
-                title: item['name'],
-                sku: item['sku'],
-              ),
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CachedNetworkImage(
-                imageUrl: item['image']['url'],
-                width: 120,
-                height: 120,
-              ),
-              Text(item['name']),
-              Text(
-                currencyWithPrice(
-                    item['price_range']['minimum_price']['final_price']),
-              ),
-            ],
-          ),
-        ),
-      );
 }

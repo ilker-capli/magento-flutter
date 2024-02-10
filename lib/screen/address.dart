@@ -45,11 +45,18 @@ class AddressScreen extends StatelessWidget {
             itemCount: addresses.length,
             itemBuilder: (context, index) {
               var address = addresses[index];
+              String street = '';
+              if (address['street'] != null && address['street'].isNotEmpty) {
+                street = '${address['street'][0]}';
+                if (address['street'].length > 1 && address['street'][1] != null) {
+                  street += ' ${address['street'][1]}';
+                }
+              }
               return Card(
                 child: Column(
                   children: [
                     Text('${address['firstname']} ${address['lastname']}'),
-                    Text('${address['street'][0]} ${address['street'][1]}'),
+                    Text(street),
                     Text('${address['city']}'),
                     Text('${address['region']['region']}'),
                     Text('${address['telephone']}')

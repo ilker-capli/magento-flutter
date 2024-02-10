@@ -11,7 +11,7 @@ class HomeTabs extends StatelessWidget {
 
   static const query = """
   {
-    categoryList(filters: { ids: {in: ["21", "12"]}}) {
+    categoryList(filters: { ids: {in: ["21", "22"]}}) {
       name
       products {
         items {
@@ -39,7 +39,7 @@ class HomeTabs extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Magento Shop'),
+        title: const Text("MNM Teknoloji"),
       ),
       body: _featuredCategory(context),
     );
@@ -87,7 +87,7 @@ class HomeTabs extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 185,
+          height: 285,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: items.length,
@@ -97,7 +97,7 @@ class HomeTabs extends StatelessWidget {
                 height: 115,
                 margin: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+                  border: Border.all(color: const Color.fromARGB(255, 204, 204, 204)),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: InkWell(
@@ -110,7 +110,10 @@ class HomeTabs extends StatelessWidget {
                       ),
                     ),
                   ),
-                  child: Column(
+                  child: Container (
+                    width: 200,
+                    alignment: Alignment.center,
+                    child: Column(
                     children: [
                       CachedNetworkImage(
                         imageUrl: item['image']['url'],
@@ -118,11 +121,16 @@ class HomeTabs extends StatelessWidget {
                             const Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) =>
                             const Icon(Icons.error),
-                        height: 130,
-                        width: 115,
+                        height: 180,
+                        width: 180,
                         fit: BoxFit.fitHeight,
                       ),
-                      Text(item['name']),
+                      Text(
+                        item['name'],
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal)
+                      ),
+                      const SizedBox(height: 8),
                       Text(
                         currencyWithPrice(
                           item['price_range']['minimum_price']['final_price'],
@@ -131,6 +139,7 @@ class HomeTabs extends StatelessWidget {
                       )
                     ],
                   ),
+                  )
                 ),
               );
             },
@@ -145,7 +154,7 @@ class HomeTabs extends StatelessWidget {
     children.add(_productsList(context));
     children.add(
       ElevatedButton(
-        child: const Text('All Categories'),
+        child: const Text('Tüm Kategoriler'),
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(

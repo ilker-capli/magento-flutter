@@ -1,12 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:magento_flutter/utils.dart';
 
 import 'provider/cart.dart';
 import 'screen/products/configurations.dart';
 
 const mutationQuery = r'''
-mutation AddProductsToCart($cartId: String!, $sku: String!, $parent_sku: String, $qty: Int!) {
+mutation AddProductsToCart($cartId: String!, $sku: String!, $parent_sku: String, $qty: Float!) {
   addProductsToCart(
     cartId: $cartId,
     cartItems: [{
@@ -48,9 +49,7 @@ Widget orderMutation(
         }
       },
       onError: (error) {
-        if (kDebugMode) {
-          print(error);
-        }
+        printLongString(error.toString());
       },
     ),
     builder: (runMutation, result) {
@@ -58,12 +57,16 @@ Widget orderMutation(
       return ElevatedButton(
         child: const Text('Add to cart'),
         onPressed: () {
+          if (kDebugMode) {
+              printLongString('sku: $sku');
+              printLongString('parentSku: ${getVariantSku(data: data, options: optionsMap, sku: sku)}');
+            }
           if (key.currentState?.validate() != null) {
             runMutation({
               'cartId': cartProvider.id,
-              'sku': sku,
-              'parent_sku': getVariantSku(data: data, options: optionsMap),
-              'qty': int.tryParse(qty.text) ?? 1,
+              'sku': getVariantSku(data: data, options: optionsMap, sku: sku),
+              'parent_sku': sku,
+              'qty': double.tryParse(qty.text) ?? 1,
             });
           }
         },

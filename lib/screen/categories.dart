@@ -26,7 +26,7 @@ class CategoriesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Categories"),
+        title: const Text("Kategoriler"),
       ),
       body: Query(
         options: QueryOptions(

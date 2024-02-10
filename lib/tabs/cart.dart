@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magento_flutter/utils.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../app_config.dart';
@@ -11,21 +12,28 @@ class CartTabs extends StatefulWidget {
 }
 
 class _CartTabsState extends State<CartTabs> {
-  late final WebViewController? controller;
+  WebViewController? controller;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
+    _initController();
+  }
 
-    // load our config
+  void _initController() async {
     final config = await AppConfig.forEnvironment();
     try {
       controller = WebViewController()
         ..loadRequest(
-          Uri.parse("${config.apiUrl}/checkout/cart"),
+          Uri.parse("${config.apiUrl}/checkout/cart/"),
         );
     } catch (e) {
-      controller = null;
+      printLongString(e.toString());
+      /*
+      setState(() {
+        controller = null;
+      });
+      */
     }
   }
 
@@ -43,9 +51,11 @@ class _CartTabsState extends State<CartTabs> {
   Widget _loadSpecificViewForDesktop() {
     if (controller != null) {
       return WebViewWidget(controller: controller!);
+    } else {
+      _initController();
+      return const Center(
+        child: Text("Can't Found WebView"),
+      );
     }
-    return const Center(
-      child: Text("Can't Found WebView"),
-    );
   }
 }

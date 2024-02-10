@@ -42,19 +42,19 @@ class _StateScreenState extends State<StartScreen> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: "Home",
+            label: "Anasayfa",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
-            label: 'Search',
+            label: 'Arama',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: "Account",
+            label: "Hesabım",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
-            label: "Cart",
+            label: "Sepetim",
           )
         ],
         currentIndex: _selectedIndex,

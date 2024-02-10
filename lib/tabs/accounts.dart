@@ -34,7 +34,7 @@ class AccountsTabs extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Accounts"),
+        title: const Text("Hesabım"),
       ),
       body: accountsBody(context),
     );
@@ -55,9 +55,9 @@ class AccountsTabs extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text('Logged in as Guest'),
+          const Text('Misafir olarak'),
           ElevatedButton(
-            child: const Text('Sign in'),
+            child: const Text('Giriş Yap'),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const SignInScreen()),
@@ -70,7 +70,7 @@ class AccountsTabs extends StatelessWidget {
 
   Widget _buildCoverImage(Size screenSize) {
     return Container(
-      height: screenSize.height / 2.6,
+      height: screenSize.height / 2.2,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/profile_cover.jpg'),
@@ -85,7 +85,13 @@ class AccountsTabs extends StatelessWidget {
       options: QueryOptions(document: gql(customerQuery)),
       builder: (result, {fetchMore, refetch}) {
         if (result.hasException) {
-          return Text(result.exception.toString());
+          if (gqlQueryResultHasAuthorizationError(result)) {
+            printLongString('ERROR: graphql-authorization');
+            printLongString(result.toString());
+          }
+
+          // return Text(result.exception.toString());
+          // return _guest(context);
         }
 
         if (result.isLoading) {
@@ -101,13 +107,14 @@ class AccountsTabs extends StatelessWidget {
             children: [
               Stack(
                 children: [
-                  _buildCoverImage(screenSize),
+                  _buildCoverImage(screenSize/2),
                   Column(
                     children: [
-                      SizedBox(height: screenSize.height / 6.4),
+                      const SizedBox(height: 24),
                       _buildProfileImage(),
                       Text(
                         '${customer['firstname']} ${customer['lastname']}',
+                        style: const TextStyle(fontSize: 14, color: Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold),
                       ),
                     ],
                   )
@@ -115,8 +122,8 @@ class AccountsTabs extends StatelessWidget {
               ),
               Card(
                 child: ListTile(
-                  title: const Text('Orders'),
-                  subtitle: const Text('Check your order status'),
+                  title: const Text('Siparişlerim'),
+                  subtitle: const Text('Siparişlerinizin Durumlarını Kontrol Edin'),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -126,8 +133,8 @@ class AccountsTabs extends StatelessWidget {
               ),
               Card(
                 child: ListTile(
-                  title: const Text('Address'),
-                  subtitle: const Text('Save address for hassle-free checkout'),
+                  title: const Text('Adres Defterim'),
+                  subtitle: const Text('Kayıtlı Adreslerini Gör / Düzenle'),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -137,8 +144,8 @@ class AccountsTabs extends StatelessWidget {
               ),
               Card(
                 child: ListTile(
-                  title: const Text('Wishlist'),
-                  subtitle: const Text('Check your wishlists'),
+                  title: const Text('Favori Listem'),
+                  subtitle: const Text('Favori Listenizdeki Ürünleri Görün'),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -150,14 +157,19 @@ class AccountsTabs extends StatelessWidget {
                 options: MutationOptions(
                   document: gql(revokeToken),
                   onCompleted: (data) {
-                    final result = data?['revokeCustomerToken']?['result'];
-                    if (result) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Log out Succeeded!')),
-                      );
-                      Provider.of<AccountsProvider>(context, listen: false)
-                          .signOff();
-                      getCart(context);
+                    if (data != null) {
+                      printLongString('revoke... onCompleted');
+                      printLongString(data.toString());
+
+                      final result = data['revokeCustomerToken']?['result'] ?? false;
+                      if (result) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Çıkış Başarılı!')),
+                        );
+                        Provider.of<AccountsProvider>(context, listen: false)
+                            .signOff();
+                        getCart(context);
+                      }
                     }
                   },
                   onError: (error) {
@@ -170,7 +182,7 @@ class AccountsTabs extends StatelessWidget {
                 ),
                 builder: (runMutation, result) {
                   return ElevatedButton(
-                    child: const Text('Logout'),
+                    child: const Text('Çıkış Yap'),
                     onPressed: () {
                       runMutation({});
                     },

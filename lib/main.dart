@@ -64,8 +64,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Magento Shop',
             theme: ThemeData(
-              colorScheme: lightColorScheme ?? _defaultLightColorScheme,
-              useMaterial3: true,
+              useMaterial3: true, colorScheme: lightColorScheme ?? _defaultLightColorScheme.copyWith(background: Colors.white),
             ),
             darkTheme: ThemeData(
               colorScheme: darkColorScheme ?? _defaultDarkColorScheme,

@@ -43,7 +43,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('Sign In'),
+          title: const Text('Giriş Yap'),
         ),
         body: Form(
           key: _formKey,
@@ -53,23 +53,32 @@ class _SignInScreenState extends State<SignInScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Company Logo'),
+                const Text('Giriş Bilgileri'),
                 const SizedBox(
                   height: 45.0,
                 ),
                 TextFormField(
                   obscureText: false,
+                  autocorrect: false,
                   controller: emailController,
                   decoration: InputDecoration(
                     hintText: 'Email',
-                    labelText: 'Enter your email address',
+                    labelText: 'Email adresinizi girin',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(32.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(32.0),
+                      borderSide: const BorderSide(color: Colors.grey), // Gri renkli kenarlık
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(32.0),
+                      borderSide: const BorderSide(color: Colors.grey), // Gri renkli kenarlık
                     ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email address';
+                      return 'Lütfen Email adresinizi girin.';
                     }
                     return null;
                   },
@@ -77,17 +86,26 @@ class _SignInScreenState extends State<SignInScreen> {
                 const SizedBox(height: 25.0),
                 TextFormField(
                   obscureText: true,
+                  autocorrect: false,
                   controller: passwordController,
                   decoration: InputDecoration(
-                    hintText: 'Password',
-                    labelText: 'Enter your password',
+                    hintText: 'Parola',
+                    labelText: 'Parolanızı girin',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(32.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(32.0),
+                      borderSide: const BorderSide(color: Colors.grey), // Gri renkli kenarlık
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(32.0),
+                      borderSide: const BorderSide(color: Colors.grey), // Gri renkli kenarlık
                     ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password.';
+                      return 'Lütfen parolanızı girin';
                     }
                     return null;
                   },
@@ -122,7 +140,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   builder: (runMutation, result) {
                     return ElevatedButton(
-                      child: const Text('Login'),
+                      child: const Text('Giriş Yap'),
                       onPressed: () {
                         // Validate returns true if the form is valid, or false otherwise.
                         if (_formKey.currentState!.validate()) {
