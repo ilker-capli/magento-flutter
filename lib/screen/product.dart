@@ -135,7 +135,7 @@ expansionCallback(String panelKey, bool isExpanded) {
                         child: CircularProgressIndicator(),
                       ),
                       errorWidget: (context, url, error) => const Icon(Icons.error),
-                      height: 300,
+                      height: 500,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -163,8 +163,8 @@ expansionCallback(String panelKey, bool isExpanded) {
                   ),
                   const SizedBox(height: 16),
                   ExpansionPanelList(
-                    elevation: 0, // Shadow kaldır
-                    expandedHeaderPadding: EdgeInsets.zero, // ExpansionPanel'ın içeriğin kenar boşluklarını kaldır
+                    elevation: 0,
+                    expandedHeaderPadding: EdgeInsets.zero,
                     children: [
                       ExpansionPanel(
                         canTapOnHeader: true,
@@ -185,7 +185,7 @@ expansionCallback(String panelKey, bool isExpanded) {
                             },
                           ),
                         ),
-                        isExpanded: _isPanelExpandedMap['description'] ?? false, // Panelin durumu
+                        isExpanded: _isPanelExpandedMap['description'] ?? false,
                       ),
                       ExpansionPanel(
                         canTapOnHeader: true,
@@ -206,15 +206,15 @@ expansionCallback(String panelKey, bool isExpanded) {
                             },
                           ),
                         ),
-                        isExpanded: _isPanelExpandedMap['shipping'] ?? false, // Panelin durumu
+                        isExpanded: _isPanelExpandedMap['shipping'] ?? false,
                       ),
                     ],
 
                     expansionCallback: (panelIndex, isExpanded) {
                       if (panelIndex == 0) {
-                        expansionCallback('description', !isExpanded); // Tıklamaya göre panelin durumunu değiştir
+                        expansionCallback('description', !isExpanded);
                       } else if (panelIndex == 1) {
-                        expansionCallback('shipping', !isExpanded); // Tıklamaya göre panelin durumunu değiştir
+                        expansionCallback('shipping', !isExpanded);
                       }
                     },
                   ),

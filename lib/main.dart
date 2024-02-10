@@ -49,10 +49,9 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.client});
 
   static final _defaultLightColorScheme =
-      ColorScheme.fromSwatch(primarySwatch: Colors.blue);
+      ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey);
 
-  static final _defaultDarkColorScheme = ColorScheme.fromSwatch(
-      primarySwatch: Colors.blue, brightness: Brightness.dark);
+  static final _defaultDarkColorScheme = _defaultLightColorScheme.copyWith(background: Colors.white);
 
   // This widget is the root of your application.
   @override

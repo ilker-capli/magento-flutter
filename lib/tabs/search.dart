@@ -124,7 +124,7 @@ class _SearchTabState extends State<SearchTabs> {
         }
         return GridView.count(
           crossAxisCount: certainPlatformGridCount(),
-          childAspectRatio: 0.8, // İçerik yüksekliğini belirlemek için aspect ratio belirleyin
+          childAspectRatio: 0.475,
           children: List.generate(
             items.length,
             (index) => productBox(
