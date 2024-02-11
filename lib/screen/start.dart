@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:magento_flutter/screen/elastic.dart';
+import 'package:magento_flutter/tabs/elastic.dart';
 import 'package:magento_flutter/tabs/search.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +22,7 @@ class _StateScreenState extends State<StartScreen> {
 
   static const List<Widget> _pages = <Widget>[
     HomeTabs(),
+    ElasticTabs(),
     SearchTabs(),
     AccountsTabs(),
     CartTabs(),
@@ -43,6 +46,10 @@ class _StateScreenState extends State<StartScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: "Anasayfa",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.rocket_launch),
+            label: "Elastic",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),

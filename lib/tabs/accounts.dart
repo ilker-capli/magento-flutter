@@ -41,8 +41,10 @@ class AccountsTabs extends StatelessWidget {
   }
 
   Widget accountsBody(BuildContext context) {
+    printLongString('accountsBody');
     final isLoggedOn =
         context.select<AccountsProvider, bool>((value) => value.isCustomer);
+    printLongString(isLoggedOn.toString());
     if (isLoggedOn) {
       return _customer(context);
     }
@@ -55,7 +57,7 @@ class AccountsTabs extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text('Misafir olarak'),
+          const Text('Misafir Oturum'),
           ElevatedButton(
             child: const Text('Giriş Yap'),
             onPressed: () => Navigator.push(
@@ -88,10 +90,11 @@ class AccountsTabs extends StatelessWidget {
           if (gqlQueryResultHasAuthorizationError(result)) {
             printLongString('ERROR: graphql-authorization');
             printLongString(result.toString());
+            Provider.of<AccountsProvider>(context, listen: false).signOff();
           }
 
           // return Text(result.exception.toString());
-          // return _guest(context);
+          return _guest(context);
         }
 
         if (result.isLoading) {

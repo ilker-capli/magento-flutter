@@ -43,7 +43,7 @@ void initState() {
 // ExpansionPanelList içindeki expansionCallback metodu
 expansionCallback(String panelKey, bool isExpanded) {
   setState(() {
-    _isPanelExpandedMap[panelKey] = !isExpanded; // Tıklamaya göre panelin durumunu değiştir
+    _isPanelExpandedMap[panelKey] = !isExpanded;
   });
 }
   static const query = r'''

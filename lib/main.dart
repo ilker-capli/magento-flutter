@@ -5,7 +5,9 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:gql_dio_link/gql_dio_link.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:magento_flutter/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_config.dart';
 import 'provider/accounts.dart';
@@ -16,15 +18,43 @@ void main() async {
   // We're using HiveStore for persistence,
   // so we need to initialize Hive.
   await initHiveForFlutter();
-// load our config
+  // load our config
   final config = await AppConfig.forEnvironment();
+  printLongString('main.dart');
+  final prefs = await SharedPreferences.getInstance();
+  String? customerToken = '';
+  try {
+    customerToken = prefs.getString('customer').toString();
+  } catch(e) {
+    customerToken = '';
+  }
+
+  printLongString('CustomerToken: $customerToken');
 
   final dio = Dio();
   final cookieJar = CookieJar();
   dio.interceptors.add(CookieManager(cookieJar));
+
+  dio.interceptors.add(InterceptorsWrapper(
+    onRequest: (options, handler) {
+      printLongString(options.headers.toString());
+      printLongString(options.data.toString());
+      return handler.next(options); // İşlemi devam ettir
+    },
+  ));
+
+  final accountsProvider = AccountsProvider();
+  accountsProvider.init();
+
+  dynamic defaultHeaders = {
+    'Authorization': 'Bearer $customerToken'
+  };
+  printLongString(defaultHeaders.toString());
+  
   final link = Link.from([
-    DioLink("${config.apiUrl}/graphql", client: dio),
+    DioLink("${config.apiUrl}/graphql", client: dio, defaultHeaders: defaultHeaders),
   ]);
+
   final ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
       link: link,
@@ -32,11 +62,12 @@ void main() async {
       cache: GraphQLCache(store: HiveStore()),
     ),
   );
+
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => accountsProvider),
         ChangeNotifierProvider(create: (_) => CartProvider()),
-        ChangeNotifierProvider(create: (_) => AccountsProvider()),
       ],
       child: MyApp(client: client),
     ),

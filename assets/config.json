@@ -1,3 +1,6 @@
 {
-    "apiUrl":"https://www.vicco.com.tr"
+    "apiUrl":"https://www.vicco.com.tr",
+    "elastic": {
+        "listCdnPrefix": "https://vicco-k8s-media.mncdn.com/mnresize/425/-"
+    }
 }
